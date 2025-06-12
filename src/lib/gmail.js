@@ -187,4 +187,26 @@ export async function fetchGmailThreads(accessToken) {
       return '[Unable to decode message]';
     }
   }
-  
+  export async function fetchThreadSubjects(threadIds, accessToken) {
+  const subjects = {};
+
+  // Run requests in parallel
+  await Promise.all(
+    threadIds.map(async (id) => {
+      const res = await fetch(
+        `https://gmail.googleapis.com/gmail/v1/users/me/threads/${id}?format=metadata&metadataHeaders=Subject`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      const data = await res.json();
+      const hdrs = data.messages?.[0]?.payload?.headers || [];
+      const subj = hdrs.find((h) => h.name === 'Subject')?.value;
+      subjects[id] = subj || '(no subject)';
+    })
+  );
+
+  return subjects;
+}

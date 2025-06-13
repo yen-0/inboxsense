@@ -41,7 +41,7 @@ export async function POST(req) {
     const limitedMessages = messages.slice(0, 100);
   
     const prompt = `Summarize the following email conversation in 3–5 bullet points.
-  Focus on the key points, actions, and requests.
+  Focus on the key points, actions, and requests. Use Japanese. Return in plain text format and use ・for bullet points.
   
   ${limitedMessages
       .map(
